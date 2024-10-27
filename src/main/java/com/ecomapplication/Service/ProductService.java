@@ -11,18 +11,16 @@ public interface ProductService {
 
     ResponseEntity<ProductDTO> addProduct(String categoryId, ProductDTO product);
 
-//    ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
+    ResponseEntity<ProductResponse> getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-    ResponseEntity<ProductResponse> getAllProducts() ;
+    ResponseEntity<ProductResponse> searchByCategory(String categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-//    ProductResponse searchByCategory(String categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
-
-//    ProductResponse searchProductByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
+    ResponseEntity<ProductResponse> searchProductByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
     ResponseEntity<ProductDTO> updateProduct(String productId, ProductDTO product);
 
     ResponseEntity<ProductDTO> deleteProduct(String productId);
 
-    ResponseEntity<ProductDTO> updateProductImage(Long productId, MultipartFile image) throws IOException;
+    ResponseEntity<ProductDTO> updateProductImage(String productId, MultipartFile image) throws IOException;
 
 }

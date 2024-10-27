@@ -10,7 +10,13 @@ import com.ecomapplication.Repository.CategoryRepository;
 import com.ecomapplication.Repository.ProductRepository;
 import com.ecomapplication.Service.ProductService;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,6 +33,8 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
 
     private ModelMapper modelMapper;
+
+    private Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     @Autowired
     public ProductServiceImpl(CategoryRepository categoryRepository, ProductRepository productRepository, ModelMapper modelMapper) {
@@ -56,41 +64,95 @@ public class ProductServiceImpl implements ProductService {
         throw new APIException("Product with the ID " + productDTO.getProductId() + " already exists in this category.");
     }
 
-    @Override
-    public ResponseEntity<ProductResponse> getAllProducts() {
-        return null;
-    }
-
 //    @Override
     public ResponseEntity<ProductResponse> getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
 
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
 
+        Pageable pageable = PageRequest.of(pageNumber , pageSize, sortByAndOrder);
 
-        List<Product> products = productRepository.findAll();
+        Page<Product> products = productRepository.findAll(pageable);
 
-        List<ProductDTO> prodList = products.stream().map(
+        List<Product> prodList = products.getContent();
+
+        List<ProductDTO> prodDtoList = products.stream().map(
                         product -> modelMapper.map(product, ProductDTO.class))
                 .toList() ;
 
         ProductResponse productResponse = new ProductResponse();
-        productResponse.setContent(prodList);
+        productResponse.setContent(prodDtoList);
+        productResponse.setPageNumber(products.getNumber());
+        productResponse.setPageSize(products.getSize());
+        productResponse.setTotalElements(products.getTotalElements());
+        productResponse.setTotalPages(products.getTotalPages());
+        productResponse.setLastPage(products.isLast());
+
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
-   /* @Override
-    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-        return null;
+    @Override
+    public ResponseEntity<ProductResponse> searchByCategory(String categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
+
+        logger.info("Retrieving the Category For searchByCategory() ");
+
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber , pageSize, sortByAndOrder);
+
+        Page<Product> products = productRepository.findByCategoryOrderByPriceAsc(category, pageable);
+
+        List<Product> prodList = products.getContent();
+
+        if(prodList.isEmpty()) throw new APIException(category.getCategoryName() + " category does not have any products");
+
+        List<ProductDTO> prodDtoList = products.stream().map(
+                        product -> modelMapper.map(product, ProductDTO.class))
+                .toList() ;
+
+        ProductResponse productResponse = new ProductResponse();
+        productResponse.setContent(prodDtoList);
+        productResponse.setPageNumber(products.getNumber());
+        productResponse.setPageSize(products.getSize());
+        productResponse.setTotalElements(products.getTotalElements());
+        productResponse.setTotalPages(products.getTotalPages());
+        productResponse.setLastPage(products.isLast());
+
+        return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
     @Override
-    public ProductResponse searchByCategory(String categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-        return null;
-    }
+    public ResponseEntity<ProductResponse> searchProductByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
 
-    @Override
-    public ProductResponse searchProductByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-        return null;
-    }*/
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber , pageSize, sortByAndOrder);
+
+        Page<Product> products = productRepository.findByProductNameLikeIgnoreCase('%' + keyword + '%', pageable);
+
+        List<Product> prodList = products.getContent();
+
+        List<ProductDTO> prodDtoList = products.stream().map(
+                        product -> modelMapper.map(product, ProductDTO.class))
+                .toList() ;
+        ProductResponse productResponse = new ProductResponse();
+        productResponse.setContent(prodDtoList);
+        productResponse.setPageNumber(products.getNumber());
+        productResponse.setPageSize(products.getSize());
+        productResponse.setTotalElements(products.getTotalElements());
+        productResponse.setTotalPages(products.getTotalPages());
+        productResponse.setLastPage(products.isLast());
+
+        return new ResponseEntity<>(productResponse, HttpStatus.OK);
+    }
 
     @Override
     public ResponseEntity<ProductDTO> updateProduct(String productId, ProductDTO productDTO) {
@@ -127,7 +189,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ResponseEntity<ProductDTO> updateProductImage(Long productId, MultipartFile image) throws IOException {
+    public ResponseEntity<ProductDTO> updateProductImage(String productId, MultipartFile image) throws IOException {
         return null;
     }
 }
