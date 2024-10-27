@@ -1,5 +1,6 @@
 package com.ecomapplication.Entity;
 
+import com.ecomapplication.Util.GenerateCustomeProductId;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GenerateCustomeProductId
     private Long productId;
 
     @NotBlank

@@ -1,5 +1,6 @@
 package com.ecomapplication.Entity;
 
+import com.ecomapplication.Util.GenerateCustomeCategoryId;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -16,7 +17,7 @@ import java.util.List;
 public class Category {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GenerateCustomeCategoryId
     private Long categoryId;
 
     @NotBlank
