@@ -10,9 +10,11 @@ import com.ecomapplication.Repository.CategoryRepository;
 import com.ecomapplication.Service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
+@Service
 public class CategoryServiceImplementation implements CategoryService {
 
     private CategoryMapper categoryMapper;
@@ -25,8 +27,19 @@ public class CategoryServiceImplementation implements CategoryService {
     }
 
     @Override
-    public CategoryResponse getAllCategories() {
-        return null;
+    public ResponseEntity<CategoryResponse> getAllCategories() {
+
+        List<Category> categories = categoryRepository.findAll();
+
+        List<CategoryDTO> response = categories.stream().map(
+                        category -> categoryMapper.converToCategoryDTO(category))
+                .toList();
+
+        CategoryResponse categoryResponse = new CategoryResponse();
+        categoryResponse.setContent(response);
+        return ResponseEntity.status(HttpStatus.OK).body(categoryResponse) ;
+
+
     }
 
     @Override

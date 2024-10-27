@@ -8,7 +8,7 @@ public interface CategoryService {
 
 //    CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-    CategoryResponse getAllCategories() ;
+    ResponseEntity<CategoryResponse> getAllCategories() ;
 
     ResponseEntity<CategoryDTO> createCategory(CategoryDTO categoryDTO);
 
