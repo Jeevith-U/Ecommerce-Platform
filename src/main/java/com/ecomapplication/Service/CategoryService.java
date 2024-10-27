@@ -6,9 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface CategoryService {
 
-//    CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
-
-    ResponseEntity<CategoryResponse> getAllCategories() ;
+    ResponseEntity<CategoryResponse> getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) ;
 
     ResponseEntity<CategoryDTO> createCategory(CategoryDTO categoryDTO);
 

@@ -8,6 +8,10 @@ import com.ecomapplication.Exception.ResourceNotFoundException;
 import com.ecomapplication.Mapper.CategoryMapper;
 import com.ecomapplication.Repository.CategoryRepository;
 import com.ecomapplication.Service.CategoryService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,9 +31,20 @@ public class CategoryServiceImplementation implements CategoryService {
     }
 
     @Override
-    public ResponseEntity<CategoryResponse> getAllCategories() {
+    public ResponseEntity<CategoryResponse> getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
 
-        List<Category> categories = categoryRepository.findAll();
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ?Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageDetails = PageRequest.of(pageNumber , pageSize, sortByAndOrder) ;
+
+        Page<Category> categoryPage = categoryRepository.findAll(pageDetails);
+
+        List<Category> categories = categoryPage.getContent();
+
+        if (categories.isEmpty())
+            throw new APIException("No category created till now.");
+
+
 
         List<CategoryDTO> response = categories.stream().map(
                         category -> categoryMapper.converToCategoryDTO(category))
@@ -37,6 +52,12 @@ public class CategoryServiceImplementation implements CategoryService {
 
         CategoryResponse categoryResponse = new CategoryResponse();
         categoryResponse.setContent(response);
+        categoryResponse.setPageNumber(categoryPage.getNumber());
+        categoryResponse.setPageSize(categoryPage.getSize());
+        categoryResponse.setTotalElements(categoryPage.getTotalElements());
+        categoryResponse.setTotalPages(categoryPage.getTotalPages());
+        categoryResponse.setLastPage(categoryPage.isLast());
+
         return ResponseEntity.status(HttpStatus.OK).body(categoryResponse) ;
 
 
