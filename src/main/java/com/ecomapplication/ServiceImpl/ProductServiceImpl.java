@@ -8,11 +8,13 @@ import com.ecomapplication.Exception.APIException;
 import com.ecomapplication.Exception.ResourceNotFoundException;
 import com.ecomapplication.Repository.CategoryRepository;
 import com.ecomapplication.Repository.ProductRepository;
+import com.ecomapplication.Service.FileService;
 import com.ecomapplication.Service.ProductService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,11 +38,18 @@ public class ProductServiceImpl implements ProductService {
 
     private Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
+    private FileService fileService ;
+
+    @Value("${project.image}")
+    private String path;
+
+
     @Autowired
-    public ProductServiceImpl(CategoryRepository categoryRepository, ProductRepository productRepository, ModelMapper modelMapper) {
+    public ProductServiceImpl(CategoryRepository categoryRepository, ProductRepository productRepository, ModelMapper modelMapper, FileService fileService) {
         this.categoryRepository = categoryRepository;
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
+        this.fileService = fileService;
     }
 
     @Override
@@ -190,6 +199,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseEntity<ProductDTO> updateProductImage(String productId, MultipartFile image) throws IOException {
-        return null;
+
+        Product productFromDb = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+
+        String fileName = fileService.uploadImage(path, image);
+        productFromDb.setImage(fileName);
+
+        Product updatedProduct = productRepository.save(productFromDb);
+        ProductDTO updatedProdDto = modelMapper.map(updatedProduct, ProductDTO.class);
+
+        return ResponseEntity.ok(updatedProdDto) ;
+
     }
 }
