@@ -18,7 +18,7 @@ public class Category {
 
     @Id
     @GenerateCustomeCategoryId
-    private Long categoryId;
+    private String categoryId;
 
     @NotBlank
     @Size(min = 5, message = "Category name must contain atleast 5 characters")

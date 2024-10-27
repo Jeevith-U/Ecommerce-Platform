@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class CategoryDTO {
 
-    private Long categoryId;
+    private String categoryId;
     private String categoryName;
 
 }

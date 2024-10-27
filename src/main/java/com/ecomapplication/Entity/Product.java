@@ -17,7 +17,7 @@ public class Product {
 
     @Id
     @GenerateCustomeProductId
-    private Long productId;
+    private String productId;
 
     @NotBlank
     @Size(min = 3, message = "Product name must contain atleast 3 characters")
