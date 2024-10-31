@@ -27,7 +27,6 @@ public class Product {
     @NotBlank
     @Size(min = 6, message = "Product description must contain atleast 6 characters")
     private String description;
-    @Min(value = 1, message = "Minimum Quantity should be Onw")
     private Integer quantity;
     private double price;
     private double discount;
@@ -36,4 +35,8 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private User user;
 }
