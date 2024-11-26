@@ -1,7 +1,7 @@
 package com.ecomapplication.Filter;
 
-import com.vich.sdbmsapi.service.JwtService;
-import com.vich.sdbmsapi.service.MyUserDetailService;
+import com.ecomapplication.Security_Service.JwtService;
+import com.ecomapplication.Security_Service.MyUserDetailService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,7 +28,7 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private ApplicationContext context ;
 
-    private Logger logger = LoggerFactory.getLogger(JwtFilter.class) ;
+    private final Logger logger = LoggerFactory.getLogger(JwtFilter.class) ;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
