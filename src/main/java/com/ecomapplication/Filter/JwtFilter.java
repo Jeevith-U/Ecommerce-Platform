@@ -1,8 +1,7 @@
 package com.ecomapplication.Filter;
 
-
-import com.ecomapplication.Security.Service.JwtService;
-import com.ecomapplication.Security.Service.MyUserDetailService;
+import com.ecomapplication.Security_Service.JwtService;
+import com.ecomapplication.Security_Service.MyUserDetailService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,7 +28,7 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private ApplicationContext context ;
 
-    private Logger logger = LoggerFactory.getLogger(JwtFilter.class) ;
+    private final Logger logger = LoggerFactory.getLogger(JwtFilter.class) ;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -37,34 +36,36 @@ public class JwtFilter extends OncePerRequestFilter {
 
             logger.info("Authenticating the Request");
 
-            String token  = jwtService.getJwtFromCookeies(request) ;
+            String header = request.getHeader("Authorization") ;
+
+            String token  = null ;
 
             String username = null ;
 
-            if(token != null){
+            if (header != null && header.startsWith("Bearer ")){
+                token = header.substring(7) ;
                 username = jwtService.extractUserName(token) ;
-                logger.info("Fetched " + username + " from the token in cookie");
+                logger.info("Fetched "+username+" from the token");
+                logger.info("Fetching the Jason web token from Header");
+
             }
 
-            else {
-                logger.info("No JWT token found in cookies");
-            }
+            if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
 
-        try {
-            if (token != null && username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = context.getBean(MyUserDetailService.class).loadUserByUsername(username);
+                UserDetails userDetails = context.getBean(MyUserDetailService.class).loadUserByUsername(username) ;
 
-                if (jwtService.validateToken(token, userDetails)) {
-                    UsernamePasswordAuthenticationToken authToken =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                logger.info("Name From the UserDetails Object : "+userDetails.getUsername());
+
+                if (jwtService.validateToken(token, userDetails)){
+
+                    UsernamePasswordAuthenticationToken authenticationToken =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()) ;
+
+                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken );
                 }
             }
-        } catch (Exception e) {
-            logger.error("Authentication failed: ", e);
-        }
-        filterChain.doFilter(request, response);
-
+            filterChain.doFilter(request, response);
     }
 }
