@@ -17,7 +17,7 @@ public class Role {
     @Id
     @GenerateCustomeRoleId
     @Column(name = "role_id")
-    private Integer roleId;
+    private String roleId;
 
     @ToString.Exclude
     @Enumerated(EnumType.STRING)

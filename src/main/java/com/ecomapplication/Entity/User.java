@@ -24,7 +24,7 @@ public class User {
     @Id
     @GenerateCustomeUserId
     @Column(name = "user_id")
-    private Long userId;
+    private String userId;
 
     @NotBlank
     @Size(max = 20)

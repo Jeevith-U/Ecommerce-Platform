@@ -20,7 +20,7 @@ import java.util.List;
 public class Address {
     @Id
     @GenerateCustomeAddressId
-    private Long addressId;
+    private String addressId;
 
     @NotBlank
     @Size(min = 5, message = "Street name must be atleast 5 characters")
