@@ -1,7 +1,7 @@
 package com.ecomapplication.Filter;
 
-import com.ecomapplication.Security_Service.JwtService;
-import com.ecomapplication.Security_Service.MyUserDetailService;
+import com.ecomapplication.Security.Service.JwtService;
+import com.ecomapplication.Security.Service.MyUserDetailService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
