@@ -58,7 +58,7 @@ public class JwtService {
     public String getJwtFromCookeies(HttpServletRequest request){
         Cookie cookie = WebUtils.getCookie(request, jwtCookie) ;
 
-        if (cookie != null) return cookie.getValue() ;
+        if (cookie != null) return cookie.getValue()    ;
 
         else return null ;
     }
@@ -67,10 +67,14 @@ public class JwtService {
 
         String jwt = genarateToken(name) ;
 
-        ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/student")
+        logger.info("Generated JWT Successfully for : "+name);
+
+        ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/api")
                 .maxAge(3*60*60)
-                .httpOnly(true)
-                .build() ;
+                .httpOnly(true )
+                .build();
+
+        logger.info("Generated Cookie Successfully for : "+cookie.getName());
 
         return cookie ;
     }
@@ -85,7 +89,7 @@ public class JwtService {
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15))
                 .signWith(generateKey(), SignatureAlgorithm.HS256)
-                .compact() ;
+                .compact();
     }
 
     private Key generateKey() {

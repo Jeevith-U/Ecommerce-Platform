@@ -12,6 +12,8 @@ import com.ecomapplication.Repository.UserRepository;
 import com.ecomapplication.Security.Service.JwtService;
 import com.ecomapplication.Security.Service.UserDetailsImpl;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -32,6 +34,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    private final Logger logger = LoggerFactory.getLogger(AuthController.class) ;
+
     @Autowired
     private JwtService jwtService;
 
@@ -48,7 +52,7 @@ public class AuthController {
     PasswordEncoder encoder;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<UserInfoResponse> authenticateUser(@RequestBody LoginRequest loginRequest) {
         Authentication authentication;
         try {
             authentication = authenticationManager
@@ -57,7 +61,7 @@ public class AuthController {
             Map<String, Object> map = new HashMap<>();
             map.put("message", "Bad credentials");
             map.put("status", false);
-            return new ResponseEntity<Object>(map, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<UserInfoResponse>(HttpStatus.NOT_FOUND);
         }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);

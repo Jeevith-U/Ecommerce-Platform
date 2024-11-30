@@ -34,38 +34,39 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        try {
             logger.info("Authenticating the Request");
 
-            String header = request.getHeader("Authorization") ;
+            String jwt = parseJwt(request);
 
-            String token  = null ;
+            String username = jwtService.extractUserName(jwt);
 
-            String username = null ;
+            UserDetails userDetails = context.getBean(MyUserDetailService.class).loadUserByUsername(username);
 
-            if (header != null && header.startsWith("Bearer ")){
-                token = header.substring(7) ;
-                username = jwtService.extractUserName(token) ;
-                logger.info("Fetched "+username+" from the token");
-                logger.info("Fetching the Jason web token from Header");
+            logger.info("Loaded the UserDetails ");
 
+            if (jwt != null && jwtService.validateToken(jwt, userDetails)) {
+
+                UsernamePasswordAuthenticationToken authentication =
+
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+                logger.debug("Roles from JWT: {}", userDetails.getAuthorities());
+
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-
-            if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-
-                UserDetails userDetails = context.getBean(MyUserDetailService.class).loadUserByUsername(username) ;
-
-                logger.info("Name From the UserDetails Object : "+userDetails.getUsername());
-
-                if (jwtService.validateToken(token, userDetails)){
-
-                    UsernamePasswordAuthenticationToken authenticationToken =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()) ;
-
-                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken );
-                }
-            }
+        }catch (Exception e){
+            logger.error("Cannot set user authentication: {}", e);
+        }
             filterChain.doFilter(request, response);
     }
+
+    private String parseJwt(HttpServletRequest request) {
+        String jwt = jwtService.getJwtFromCookeies(request);
+        logger.debug("AuthTokenFilter.java: {}", jwt);
+        return jwt;
+    }
+
 }
