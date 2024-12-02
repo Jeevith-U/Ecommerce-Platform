@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@IdGeneratorType(CustomRoleId.class)
-public @interface GenerateCustomeRoleId {
+@IdGeneratorType(CustomProductId.class)
+public @interface GenerateCustomProductId {
 }

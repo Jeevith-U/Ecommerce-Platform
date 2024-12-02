@@ -5,13 +5,13 @@ import org.hibernate.id.IdentifierGenerator;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class CustomeProductId implements IdentifierGenerator {
+public class CustomAddressId implements IdentifierGenerator {
     @Override
     public Object generate(SharedSessionContractImplementor session, Object object) {
 
-        String prifix = "prod" ;
+        String prifix = "add" ;
 
-        long ranNum = ThreadLocalRandom.current().nextInt(9999, 999999);
+        long ranNum = ThreadLocalRandom.current().nextInt(9, 999);
         return prifix + ranNum;
     }
 }

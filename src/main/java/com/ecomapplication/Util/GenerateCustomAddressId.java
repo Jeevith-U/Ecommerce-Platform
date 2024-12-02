@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@IdGeneratorType(CustomeUserId.class)
-public @interface GenerateCustomeUserId {
+@IdGeneratorType(CustomAddressId.class)
+public @interface GenerateCustomAddressId {
 }
