@@ -1,6 +1,6 @@
 package com.ecomapplication.Entity;
 
-import com.ecomapplication.Util.GenerateCustomeUserId;
+import com.ecomapplication.Util.GenerateCustomUserId;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -22,7 +22,7 @@ import java.util.Set;
         })
 public class User {
     @Id
-    @GenerateCustomeUserId
+    @GenerateCustomUserId
     @Column(name = "user_id")
     private String userId;
 

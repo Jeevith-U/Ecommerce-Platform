@@ -1,8 +1,8 @@
 package com.ecomapplication.Entity;
 
-import com.ecomapplication.Util.GenerateCustomeProductId;
+
+import com.ecomapplication.Util.GenerateCustomProductId;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.List;
 public class Product {
 
     @Id
-    @GenerateCustomeProductId
+    @GenerateCustomProductId
     private String productId;
 
     @NotBlank

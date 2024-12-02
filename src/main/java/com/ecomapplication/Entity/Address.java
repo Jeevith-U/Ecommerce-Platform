@@ -1,6 +1,6 @@
 package com.ecomapplication.Entity;
 
-import com.ecomapplication.Util.GenerateCustomeAddressId;
+import com.ecomapplication.Util.GenerateCustomAddressId;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Address {
     @Id
-    @GenerateCustomeAddressId
+    @GenerateCustomAddressId
     private String addressId;
 
     @NotBlank

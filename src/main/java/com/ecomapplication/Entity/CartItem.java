@@ -1,5 +1,6 @@
 package com.ecomapplication.Entity;
 
+import com.ecomapplication.Util.GenerateCustomCartItemId;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CartItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GenerateCustomCartItemId
     private String cartItemId;
 
     @ManyToOne

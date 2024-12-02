@@ -1,6 +1,6 @@
 package com.ecomapplication.Entity;
 
-import com.ecomapplication.Util.GenerateCustomeRoleId;
+import com.ecomapplication.Util.GenerateCustomRoleId;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +15,7 @@ import lombok.ToString;
 public class Role {
 
     @Id
-    @GenerateCustomeRoleId
+    @GenerateCustomRoleId
     @Column(name = "role_id")
     private String roleId;
 
