@@ -92,6 +92,16 @@ public class CartServiceImpl implements CartService {
 
     }
 
+    @Override
+    public List<CartDTO> getAllCarts() {
+
+        List<Cart> list = cartRepository.findAll();
+
+        if(list.isEmpty()) throw new APIException("No Cart is Created") ;
+
+        return List.of();
+    }
+
     private Cart createCart() {
 
         Cart userCart = cartRepository.findCartByEmail(authUtil.loggedInEmail()) ;
