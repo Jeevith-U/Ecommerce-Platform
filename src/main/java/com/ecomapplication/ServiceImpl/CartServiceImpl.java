@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -99,7 +100,22 @@ public class CartServiceImpl implements CartService {
 
         if(list.isEmpty()) throw new APIException("No Cart is Created") ;
 
-        return List.of();
+        List<CartDTO> cartDTOS =  list.stream().map(cart -> {
+
+            CartDTO cartDto = modelMapper.map(cart, CartDTO.class);
+
+            List<ProductDTO> products = cart.getCartItems().stream().map(p ->
+                    modelMapper.map(p.getProduct(), ProductDTO.class))
+                    .collect(Collectors.toList()) ;
+
+            cartDto.setProducts(products);
+
+            return cartDto ;
+
+        }).collect(Collectors.toList()) ;
+
+
+        return cartDTOS ;
     }
 
     private Cart createCart() {
