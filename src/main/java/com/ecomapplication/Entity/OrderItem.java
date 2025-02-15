@@ -1,19 +1,19 @@
 package com.ecomapplication.Entity;
 
+import com.ecomapplication.Util.GenerateCustomOrderItemId;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Data
-@Table(name = "order_items")
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "order_items")
 public class OrderItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GenerateCustomOrderItemId
     private String orderItemId;
 
     @ManyToOne
