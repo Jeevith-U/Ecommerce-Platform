@@ -26,7 +26,7 @@ public class ProductController {
 
     @PostMapping("/admin/categories/{categoryId}/product")
     public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDTO,
-                                                 @PathVariable String categoryId){
+                                                 @PathVariable String categoryId) {
         return productService.addProduct(categoryId, productDTO);
     }
 
