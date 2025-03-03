@@ -58,6 +58,9 @@ public class ProductServiceImpl implements ProductService {
     @Value("${project.image}")
     private String path;
 
+    @Value("${image.base.url}")
+    private String imageBaseUrl;
+
 
     @Autowired
     public ProductServiceImpl(CategoryRepository categoryRepository, ProductRepository productRepository, ModelMapper modelMapper, FileService fileService) {
@@ -101,8 +104,12 @@ public class ProductServiceImpl implements ProductService {
 
         List<Product> prodList = products.getContent();
 
-        List<ProductDTO> prodDtoList = products.stream().map(
-                        product -> modelMapper.map(product, ProductDTO.class))
+        List<ProductDTO> prodDtoList = products.stream()
+                .map(product -> {
+                    ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
+                    productDTO.setImage(constructImageURL(product.getImage()));
+                    return productDTO;
+                })
                 .toList() ;
 
         ProductResponse productResponse = new ProductResponse();
@@ -150,6 +157,11 @@ public class ProductServiceImpl implements ProductService {
 
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
+
+    private String constructImageURL(String imageName) {
+        return imageName.endsWith("/")? imageBaseUrl + imageName : imageBaseUrl+ "/" + imageName ;
+    }
+
 
     @Override
     public ResponseEntity<ProductResponse> searchProductByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
