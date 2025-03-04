@@ -23,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -92,7 +93,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
 //    @Override
-    public ResponseEntity<ProductResponse> getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+    public ResponseEntity<ProductResponse> getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String keyword, String category) {
 
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
@@ -100,7 +101,19 @@ public class ProductServiceImpl implements ProductService {
 
         Pageable pageable = PageRequest.of(pageNumber , pageSize, sortByAndOrder);
 
-        Page<Product> products = productRepository.findAll(pageable);
+        Specification spec = Specification.where(null);
+
+        if (keyword != null && !keyword.isEmpty()) {
+            spec = spec.and((root, query, cb) -> cb.like(cb.lower( root.get("productName")), "%" + keyword + "%"));
+
+        }
+
+        if (category != null && !category.isEmpty()) {
+            spec = spec.and((root, query, cb) -> cb.like(root.get("category").get("categoryName"), category));
+
+        }
+
+        Page<Product> products = productRepository.findAll(spec, pageable);
 
         List<Product> prodList = products.getContent();
 

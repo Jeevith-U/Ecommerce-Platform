@@ -11,7 +11,7 @@ public interface ProductService {
 
     ResponseEntity<ProductDTO> addProduct(String categoryId, ProductDTO product);
 
-    ResponseEntity<ProductResponse> getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
+    ResponseEntity<ProductResponse> getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String keyword, String category);
 
     ResponseEntity<ProductResponse> searchByCategory(String categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
